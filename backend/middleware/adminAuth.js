@@ -19,7 +19,7 @@ const adminAuth = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Admin auth error:', error);
-    res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
