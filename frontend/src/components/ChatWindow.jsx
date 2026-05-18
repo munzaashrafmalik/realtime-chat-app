@@ -20,6 +20,7 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
   const [highlightedMessageId, setHighlightedMessageId] = useState(null);
   const [receiverPublicKey, setReceiverPublicKey] = useState(null);
   const [decryptedMessages, setDecryptedMessages] = useState({});
+  const [sentOriginalMessages, setSentOriginalMessages] = useState({});
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -115,6 +116,23 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
     decryptMessages();
   }, [filteredMessages, selectedUser._id]);
 
+  // Store original messages for sent encrypted messages
+  useEffect(() => {
+    filteredMessages.forEach(msg => {
+      if (msg.isEncrypted && msg.sender._id === currentUser._id && !sentOriginalMessages[msg._id]) {
+        // Check if we have the original message mapped to encrypted content
+        const originalMsg = sentOriginalMessages[msg.content];
+        if (originalMsg) {
+          // Map message ID to original message
+          setSentOriginalMessages(prev => ({
+            ...prev,
+            [msg._id]: originalMsg
+          }));
+        }
+      }
+    });
+  }, [filteredMessages, currentUser._id]);
+
   useEffect(() => {
     scrollToBottom();
 
@@ -171,21 +189,28 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
       setUploading(false);
     }
 
-    // Encrypt message if receiver has public key
-    let messageContent = newMessage.trim();
+    // Store original message before encryption
+    const originalMessage = newMessage.trim();
+    let messageContent = originalMessage;
     let isEncrypted = false;
 
     if (receiverPublicKey && messageContent) {
       try {
-        messageContent = await encryptMessage(messageContent, receiverPublicKey);
+        const encryptedContent = await encryptMessage(messageContent, receiverPublicKey);
+        messageContent = encryptedContent;
         isEncrypted = true;
+        // Store original message mapped to encrypted content temporarily
+        setSentOriginalMessages(prev => ({
+          ...prev,
+          [encryptedContent]: originalMessage
+        }));
       } catch (error) {
         console.error('Encryption error:', error);
         // Send unencrypted if encryption fails
       }
     }
 
-    sendMessage(selectedUser._id, messageContent, fileAttachment, isEncrypted);
+    sendMessage(selectedUser._id, messageContent, fileAttachment, isEncrypted, originalMessage);
     setNewMessage('');
     setSelectedFile(null);
     setIsTyping(false);
@@ -370,7 +395,9 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                     )}
                     {message.content && (
                       <p className="break-words">
-                        {message.isEncrypted && !isSender
+                        {message.isEncrypted && isSender
+                          ? (sentOriginalMessages[message._id] || message.content)
+                          : message.isEncrypted && !isSender
                           ? (decryptedMessages[message._id] || 'Decrypting...')
                           : (searchQuery ? highlightText(message.content, searchQuery) : message.content)
                         }

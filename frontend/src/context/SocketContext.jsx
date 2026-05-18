@@ -121,14 +121,15 @@ export const SocketProvider = ({ children }) => {
     }
   }, [user]);
 
-  const sendMessage = (receiverId, content, fileAttachment = null, isEncrypted = false) => {
+  const sendMessage = (receiverId, content, fileAttachment = null, isEncrypted = false, originalMessage = null) => {
     if (socket && user) {
       socket.emit('send_message', {
         senderId: user._id,
         receiverId,
         content,
         fileAttachment,
-        isEncrypted
+        isEncrypted,
+        originalMessage
       });
     }
   };
