@@ -22,37 +22,37 @@ const IncomingCallModal = ({ isOpen, caller, callType, onAccept, onReject }) => 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
       <audio ref={ringtoneRef} loop>
         <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OihUBELTKXh8bllHAU2jdXvzn0vBSh+zPDajzsKElyx6OyrWBQLSKDf8sFuIwUrgc7y2Ik2CBhkuezooVARC0yl4fG5ZRwFNo3V7859LwUofsz" type="audio/wav" />
       </audio>
 
-      <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+      <div className="glass-dark rounded-2xl p-8 max-w-md w-full mx-4 shadow-premium border border-dark-700 animate-slide-up">
         <div className="text-center">
           <div className="mb-6">
             <div className="relative inline-block">
               <img
-                src={caller?.avatar || 'https://ui-avatars.com/api/?background=random'}
+                src={caller?.avatar || `https://ui-avatars.com/api/?name=${caller?.username}&background=667eea&color=fff`}
                 alt={caller?.username}
-                className="w-32 h-32 rounded-full mx-auto border-4 border-purple-600 animate-pulse"
+                className="w-32 h-32 rounded-full mx-auto border-4 border-accent-purple shadow-glow animate-pulse"
               />
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-premium text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                 {callType === 'video' ? '📹 Video Call' : '📞 Audio Call'}
               </div>
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             {caller?.username || 'Unknown User'}
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-dark-400 mb-8">
             Incoming {callType} call...
           </p>
 
           <div className="flex justify-center gap-6">
             <button
               onClick={onReject}
-              className="bg-red-500 hover:bg-red-600 text-white rounded-full p-6 transition-all transform hover:scale-110 shadow-lg"
+              className="bg-red-500/20 border-2 border-red-500 hover:bg-red-500 text-red-400 hover:text-white rounded-full p-6 transition-all transform hover:scale-110 shadow-lg"
               title="Reject Call"
             >
               <svg
@@ -72,7 +72,7 @@ const IncomingCallModal = ({ isOpen, caller, callType, onAccept, onReject }) => 
 
             <button
               onClick={onAccept}
-              className="bg-green-500 hover:bg-green-600 text-white rounded-full p-6 transition-all transform hover:scale-110 shadow-lg"
+              className="bg-green-500/20 border-2 border-green-500 hover:bg-green-500 text-green-400 hover:text-white rounded-full p-6 transition-all transform hover:scale-110 shadow-lg"
               title="Accept Call"
             >
               <svg

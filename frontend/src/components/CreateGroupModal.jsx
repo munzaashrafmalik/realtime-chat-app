@@ -67,64 +67,66 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+      <div className="glass-dark rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto border border-dark-700 shadow-premium animate-slide-up">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">Create New Group</h2>
+          <h2 className="text-xl font-semibold text-white">Create New Group</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="text-dark-400 hover:text-white text-2xl transition-colors"
           >
             ×
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-2 rounded-lg mb-4 animate-fade-in">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-dark-200 text-sm font-semibold mb-2">
               Group Name
             </label>
             <input
               type="text"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 bg-dark-800/50 border border-dark-700 rounded-lg focus:outline-none focus:border-accent-purple text-white placeholder-dark-500 transition-all"
               placeholder="Enter group name"
               maxLength={50}
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-semibold mb-2">
+            <label className="block text-dark-200 text-sm font-semibold mb-2">
               Select Members ({selectedUsers.length})
             </label>
-            <div className="border border-gray-300 rounded-lg max-h-60 overflow-y-auto">
+            <div className="border border-dark-700 rounded-lg max-h-60 overflow-y-auto bg-dark-800/30">
               {users.map((user) => (
                 <div
                   key={user._id}
                   onClick={() => handleUserToggle(user._id)}
-                  className={`p-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${
-                    selectedUsers.includes(user._id) ? 'bg-purple-50' : ''
+                  className={`p-3 flex items-center gap-3 cursor-pointer transition-colors ${
+                    selectedUsers.includes(user._id)
+                      ? 'bg-accent-purple/20 border-l-4 border-accent-purple'
+                      : 'hover:bg-dark-700/30'
                   }`}
                 >
                   <input
                     type="checkbox"
                     checked={selectedUsers.includes(user._id)}
                     onChange={() => {}}
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-accent-purple"
                   />
                   <img
-                    src={user.avatar}
+                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=667eea&color=fff`}
                     alt={user.username}
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full border-2 border-dark-700"
                   />
-                  <span className="font-medium text-gray-800">{user.username}</span>
+                  <span className="font-medium text-white">{user.username}</span>
                 </div>
               ))}
             </div>
@@ -134,14 +136,14 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-dark-700 rounded-lg hover:bg-dark-700/50 text-white transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              className="flex-1 btn-premium text-white px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating...' : 'Create Group'}
             </button>

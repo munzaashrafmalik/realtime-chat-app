@@ -8,13 +8,26 @@ const messageSchema = new mongoose.Schema({
   },
   receiver: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
+  },
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group'
   },
   content: {
     type: String,
     required: true,
     trim: true
+  },
+  isEncrypted: {
+    type: Boolean,
+    default: false
+  },
+  fileAttachment: {
+    filename: String,
+    url: String,
+    mimetype: String,
+    size: Number
   },
   isRead: {
     type: Boolean,
@@ -23,10 +36,18 @@ const messageSchema = new mongoose.Schema({
   readAt: {
     type: Date
   },
-  isEncrypted: {
-    type: Boolean,
-    default: false
-  }
+  reactions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    username: String,
+    emoji: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });
