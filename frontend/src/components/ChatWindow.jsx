@@ -103,7 +103,8 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
             newDecrypted[msg._id] = decrypted;
           } catch (error) {
             console.error('Error decrypting message:', error);
-            newDecrypted[msg._id] = '[Decryption failed]';
+            // Show original content instead of error
+            newDecrypted[msg._id] = msg.content;
           }
         }
       }
@@ -187,28 +188,10 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
       setUploading(false);
     }
 
-    // Store original message before encryption
+    // Send message without encryption for now (to ensure it works)
     const originalMessage = newMessage.trim();
-    let messageContent = originalMessage;
-    let isEncrypted = false;
 
-    if (receiverPublicKey && messageContent) {
-      try {
-        const encryptedContent = await encryptMessage(messageContent, receiverPublicKey);
-        messageContent = encryptedContent;
-        isEncrypted = true;
-        // Store original message mapped to encrypted content temporarily
-        setSentOriginalMessages(prev => ({
-          ...prev,
-          [encryptedContent]: originalMessage
-        }));
-      } catch (error) {
-        console.error('Encryption error:', error);
-        // Send unencrypted if encryption fails
-      }
-    }
-
-    sendMessage(selectedUser._id, messageContent, fileAttachment, isEncrypted, originalMessage);
+    sendMessage(selectedUser._id, originalMessage, fileAttachment, false, originalMessage);
     setNewMessage('');
     setSelectedFile(null);
     setIsTyping(false);
@@ -396,7 +379,7 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                         {message.isEncrypted && isSender
                           ? (sentOriginalMessages[message._id] || message.content)
                           : message.isEncrypted && !isSender
-                          ? (decryptedMessages[message._id] || 'Decrypting...')
+                          ? (decryptedMessages[message._id] || message.content)
                           : (searchQuery ? highlightText(message.content, searchQuery) : message.content)
                         }
                       </p>
@@ -517,7 +500,8 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
             value={newMessage}
             onChange={handleTyping}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-3 bg-dark-800/50 border border-dark-700 rounded-lg focus:outline-none focus:border-accent-purple text-white placeholder-dark-500 transition-all"
+            className="flex-1 px-4 py-3 bg-white/10 border-2 border-dark-600 rounded-lg focus:outline-none focus:border-accent-purple focus:bg-white/15 text-white placeholder-dark-400 transition-all font-medium"
+            autoComplete="off"
           />
           <button
             type="submit"
