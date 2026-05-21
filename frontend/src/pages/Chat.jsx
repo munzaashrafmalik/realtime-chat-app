@@ -11,6 +11,8 @@ import CreateGroupModal from '../components/CreateGroupModal';
 import NotificationSettings from '../components/NotificationSettings';
 import IncomingCallModal from '../components/IncomingCallModal';
 import ActiveCallWindow from '../components/ActiveCallWindow';
+import useUnreadMessages from '../hooks/useUnreadMessages';
+import notificationService from '../services/notificationService';
 import { useNavigate } from 'react-router-dom';
 
 const Chat = () => {
@@ -45,12 +47,20 @@ const Chat = () => {
   } = useWebRTC();
   const navigate = useNavigate();
 
+  // Calculate unread message counts
+  const unreadCounts = useUnreadMessages(messages, user, selectedUser);
+
   const statuses = [
     { name: 'Available', color: 'bg-green-500', icon: '🟢' },
     { name: 'Away', color: 'bg-yellow-500', icon: '🟡' },
     { name: 'Busy', color: 'bg-red-500', icon: '🔴' },
     { name: 'Do Not Disturb', color: 'bg-gray-500', icon: '⛔' }
   ];
+
+  useEffect(() => {
+    // Request notification permission on mount
+    notificationService.requestPermission();
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -286,6 +296,7 @@ const Chat = () => {
                 selectedUser={selectedUser}
                 onUserSelect={handleUserSelect}
                 loading={loading}
+                unreadCounts={unreadCounts}
               />
             ) : (
               <GroupList

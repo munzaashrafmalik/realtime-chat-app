@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', async (data) => {
     try {
-      const { senderId, receiverId, content, isEncrypted } = data;
+      const { senderId, receiverId, content, isEncrypted, originalMessage } = data;
 
       const message = await Message.create({
         sender: senderId,
@@ -85,12 +85,18 @@ io.on('connection', (socket) => {
         .populate('sender', 'username avatar')
         .populate('receiver', 'username avatar');
 
+      // Send to receiver with encrypted content
       const receiverSocketId = onlineUsers.get(receiverId);
       if (receiverSocketId) {
         io.to(receiverSocketId).emit('receive_message', populatedMessage);
       }
 
-      socket.emit('message_sent', populatedMessage);
+      // Send back to sender with original message if encrypted
+      const senderMessage = {
+        ...populatedMessage.toObject(),
+        originalMessage: isEncrypted ? originalMessage : null
+      };
+      socket.emit('message_sent', senderMessage);
     } catch (error) {
       socket.emit('message_error', { message: error.message });
     }

@@ -119,14 +119,12 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
   // Store original messages for sent encrypted messages
   useEffect(() => {
     filteredMessages.forEach(msg => {
-      if (msg.isEncrypted && msg.sender._id === currentUser._id && !sentOriginalMessages[msg._id]) {
-        // Check if we have the original message mapped to encrypted content
-        const originalMsg = sentOriginalMessages[msg.content];
-        if (originalMsg) {
-          // Map message ID to original message
+      if (msg.isEncrypted && msg.sender._id === currentUser._id) {
+        // If message has originalMessage from socket, store it
+        if (msg.originalMessage && !sentOriginalMessages[msg._id]) {
           setSentOriginalMessages(prev => ({
             ...prev,
-            [msg._id]: originalMsg
+            [msg._id]: msg.originalMessage
           }));
         }
       }

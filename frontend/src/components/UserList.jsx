@@ -1,4 +1,4 @@
-const UserList = ({ users, onlineUsers, selectedUser, onUserSelect, loading }) => {
+const UserList = ({ users, onlineUsers, selectedUser, onUserSelect, loading, unreadCounts = {} }) => {
   const isUserOnline = (userId) => onlineUsers.includes(userId);
 
   const getStatusColor = (status) => {
@@ -40,39 +40,51 @@ const UserList = ({ users, onlineUsers, selectedUser, onUserSelect, loading }) =
         {users.length === 0 ? (
           <div className="p-4 text-center text-dark-400">No users found</div>
         ) : (
-          users.map((user) => (
-            <div
-              key={user._id}
-              onClick={() => onUserSelect(user)}
-              className={`p-4 flex items-center gap-3 cursor-pointer transition-all ${
-                selectedUser?._id === user._id
-                  ? 'bg-accent-purple/20 border-l-4 border-accent-purple shadow-inner-glow'
-                  : 'hover:bg-dark-700/30'
-              }`}
-            >
-              <div className="relative">
-                <img
-                  src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=667eea&color=fff`}
-                  alt={user.username}
-                  className="w-12 h-12 rounded-full border-2 border-dark-700"
-                />
-                {isUserOnline(user._id) && (
-                  <span className={`absolute bottom-0 right-0 w-3 h-3 ${getStatusColor(user.status)} border-2 border-dark-900 rounded-full shadow-glow`}></span>
+          users.map((user) => {
+            const unreadCount = unreadCounts[user._id] || 0;
+
+            return (
+              <div
+                key={user._id}
+                onClick={() => onUserSelect(user)}
+                className={`p-4 flex items-center gap-3 cursor-pointer transition-all relative ${
+                  selectedUser?._id === user._id
+                    ? 'bg-accent-purple/20 border-l-4 border-accent-purple shadow-inner-glow'
+                    : 'hover:bg-dark-700/30'
+                }`}
+              >
+                <div className="relative">
+                  <img
+                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=667eea&color=fff`}
+                    alt={user.username}
+                    className="w-12 h-12 rounded-full border-2 border-dark-700"
+                  />
+                  {isUserOnline(user._id) && (
+                    <span className={`absolute bottom-0 right-0 w-3 h-3 ${getStatusColor(user.status)} border-2 border-dark-900 rounded-full shadow-glow`}></span>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-white truncate">{user.username}</h3>
+                  <p className="text-sm text-dark-400">
+                    {isUserOnline(user._id) ? (
+                      <span className="text-green-400">{user.status || 'Available'}</span>
+                    ) : (
+                      <span>Offline</span>
+                    )}
+                  </p>
+                </div>
+
+                {unreadCount > 0 && (
+                  <div className="flex-shrink-0">
+                    <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-accent-purple rounded-full shadow-glow animate-pulse">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  </div>
                 )}
               </div>
-
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-white truncate">{user.username}</h3>
-                <p className="text-sm text-dark-400">
-                  {isUserOnline(user._id) ? (
-                    <span className="text-green-400">{user.status || 'Available'}</span>
-                  ) : (
-                    <span>Offline</span>
-                  )}
-                </p>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
