@@ -267,6 +267,49 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Group Chat Events
+  socket.on('join_group', (groupId) => {
+    socket.join(`group_${groupId}`);
+    console.log(`User ${socket.id} joined group ${groupId}`);
+  });
+
+  socket.on('leave_group', (groupId) => {
+    socket.leave(`group_${groupId}`);
+    console.log(`User ${socket.id} left group ${groupId}`);
+  });
+
+  socket.on('send_group_message', async (data) => {
+    try {
+      const { senderId, groupId, content, fileAttachment } = data;
+
+      const message = await Message.create({
+        sender: senderId,
+        group: groupId,
+        content,
+        fileAttachment
+      });
+
+      const populatedMessage = await Message.findById(message._id)
+        .populate('sender', 'username avatar');
+
+      // Broadcast to all members in the group room
+      io.to(`group_${groupId}`).emit('receive_group_message', populatedMessage);
+    } catch (error) {
+      console.error('Group message error:', error);
+      socket.emit('message_error', { message: error.message });
+    }
+  });
+
+  socket.on('group_typing', (data) => {
+    const { groupId, senderId, username, isTyping } = data;
+    // Broadcast to all group members except sender
+    socket.to(`group_${groupId}`).emit('group_user_typing', {
+      senderId,
+      username,
+      isTyping
+    });
+  });
+
   socket.on('disconnect', async () => {
     console.log('User disconnected:', socket.id);
 
