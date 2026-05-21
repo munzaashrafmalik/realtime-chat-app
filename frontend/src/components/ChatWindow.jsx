@@ -286,40 +286,40 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+    <div className="flex-1 flex flex-col bg-dark-900/50 backdrop-blur-sm">
+      <div className="glass-dark border-b border-dark-700/50 px-6 py-4 flex items-center gap-3 shadow-lg">
         <img
-          src={selectedUser.avatar || 'https://ui-avatars.com/api/?background=random'}
+          src={selectedUser.avatar || `https://ui-avatars.com/api/?name=${selectedUser.username}&background=667eea&color=fff`}
           alt={selectedUser.username}
-          className="w-12 h-12 rounded-full"
+          className="w-12 h-12 rounded-full border-2 border-accent-purple/50 shadow-glow"
         />
         <div className="flex-1">
-          <h2 className="font-semibold text-gray-800">{selectedUser.username}</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="font-semibold text-white">{selectedUser.username}</h2>
+          <p className="text-sm text-dark-400">
             {typingUsers[selectedUser._id] ? (
-              <span className="text-purple-600">typing...</span>
+              <span className="text-accent-purple animate-pulse">typing...</span>
             ) : (
-              <span>{selectedUser.isOnline ? 'Online' : 'Offline'}</span>
+              <span>{selectedUser.isOnline ? '🟢 Online' : '⚫ Offline'}</span>
             )}
           </p>
         </div>
         <button
           onClick={() => initiateCall(selectedUser._id, 'audio')}
-          className="p-2 hover:bg-gray-100 rounded-lg transition"
+          className="p-2 hover:bg-dark-700/50 rounded-lg transition-colors text-2xl"
           title="Audio Call"
         >
           📞
         </button>
         <button
           onClick={() => initiateCall(selectedUser._id, 'video')}
-          className="p-2 hover:bg-gray-100 rounded-lg transition"
+          className="p-2 hover:bg-dark-700/50 rounded-lg transition-colors text-2xl"
           title="Video Call"
         >
           📹
         </button>
         <button
           onClick={() => setShowSearch(!showSearch)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition"
+          className="p-2 hover:bg-dark-700/50 rounded-lg transition-colors text-2xl"
           title="Search messages"
         >
           🔍
@@ -337,10 +337,10 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
         />
       )}
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {displayedMessages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500">
+            <p className="text-dark-400">
               {searchQuery ? 'No messages found' : 'No messages yet. Start the conversation!'}
             </p>
           </div>
@@ -352,14 +352,14 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
             return (
               <div
                 key={message._id}
-                className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${isSender ? 'justify-end' : 'justify-start'} animate-fade-in`}
               >
                 <div className="relative group">
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl shadow-lg ${
                       isSender
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white text-gray-800 border border-gray-200'
+                        ? 'bg-gradient-premium text-white'
+                        : 'glass-dark text-white border border-dark-700'
                     }`}
                   >
                     {message.fileAttachment && (
@@ -368,27 +368,27 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                           <img
                             src={message.fileAttachment.url}
                             alt={message.fileAttachment.filename}
-                            className="rounded max-w-full h-auto cursor-pointer"
+                            className="rounded-lg max-w-full h-auto cursor-pointer border border-dark-700"
                             onClick={() => window.open(message.fileAttachment.url, '_blank')}
                           />
                         ) : (
                           <a
                             href={message.fileAttachment.url}
                             download={message.fileAttachment.filename}
-                            className={`flex items-center gap-2 p-2 rounded ${
-                              isSender ? 'bg-purple-700' : 'bg-gray-100'
-                            } hover:opacity-80`}
+                            className={`flex items-center gap-2 p-2 rounded-lg ${
+                              isSender ? 'bg-white/10' : 'bg-dark-800/50'
+                            } hover:opacity-80 transition-opacity`}
                           >
                             <span className="text-2xl">{getFileIcon(message.fileAttachment.mimetype)}</span>
                             <div className="flex-1 min-w-0">
-                              <p className={`text-sm font-medium truncate ${isSender ? 'text-white' : 'text-gray-800'}`}>
+                              <p className="text-sm font-medium truncate text-white">
                                 {message.fileAttachment.filename}
                               </p>
-                              <p className={`text-xs ${isSender ? 'text-purple-200' : 'text-gray-500'}`}>
+                              <p className={`text-xs ${isSender ? 'text-white/70' : 'text-dark-400'}`}>
                                 {formatFileSize(message.fileAttachment.size)}
                               </p>
                             </div>
-                            <span className={`text-sm ${isSender ? 'text-white' : 'text-gray-600'}`}>⬇</span>
+                            <span className="text-sm text-white">⬇</span>
                           </a>
                         )}
                       </div>
@@ -405,7 +405,7 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                     )}
                     <div
                       className={`flex items-center gap-1 text-xs mt-1 ${
-                        isSender ? 'text-purple-200' : 'text-gray-500'
+                        isSender ? 'text-white/70' : 'text-dark-400'
                       }`}
                     >
                       <span>{formatTime(message.createdAt)}</span>
@@ -435,12 +435,12 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                           onClick={() => handleReaction(message._id, emoji)}
                           className={`px-2 py-0.5 rounded-full text-xs flex items-center gap-1 ${
                             hasUserReacted(message.reactions, emoji)
-                              ? 'bg-purple-100 border-2 border-purple-500'
-                              : 'bg-gray-100 border border-gray-300'
-                          } hover:scale-110 transition`}
+                              ? 'bg-accent-purple/30 border-2 border-accent-purple'
+                              : 'glass-dark border border-dark-700'
+                          } hover:scale-110 transition-transform`}
                         >
                           <span>{emoji}</span>
-                          <span className="text-gray-700">{count}</span>
+                          <span className="text-white">{count}</span>
                         </button>
                       ))}
                     </div>
@@ -451,7 +451,7 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
                     onClick={() => setShowReactionPicker(
                       showReactionPicker === message._id ? null : message._id
                     )}
-                    className="absolute -bottom-2 right-2 opacity-0 group-hover:opacity-100 bg-gray-200 hover:bg-gray-300 rounded-full p-1 text-sm transition"
+                    className="absolute -bottom-2 right-2 opacity-0 group-hover:opacity-100 glass-dark hover:bg-dark-700/50 rounded-full p-1 text-sm transition-all shadow-lg"
                     title="Add reaction"
                   >
                     😊
@@ -459,12 +459,12 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
 
                   {/* Reaction Picker */}
                   {showReactionPicker === message._id && (
-                    <div className="absolute bottom-full mb-2 right-0 bg-white border border-gray-300 rounded-lg shadow-lg p-2 flex gap-2 z-10">
+                    <div className="absolute bottom-full mb-2 right-0 glass-dark border border-dark-700 rounded-lg shadow-premium p-2 flex gap-2 z-10">
                       {emojis.map((emoji) => (
                         <button
                           key={emoji}
                           onClick={() => handleReaction(message._id, emoji)}
-                          className={`text-2xl hover:scale-125 transition ${
+                          className={`text-2xl hover:scale-125 transition-transform ${
                             hasUserReacted(message.reactions, emoji) ? 'scale-110' : ''
                           }`}
                         >
@@ -481,18 +481,18 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSendMessage} className="border-t border-gray-200 p-4 bg-white">
+      <form onSubmit={handleSendMessage} className="border-t border-dark-700/50 p-4 glass-dark">
         {selectedFile && (
-          <div className="mb-2 flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+          <div className="mb-2 flex items-center gap-2 p-2 bg-dark-800/50 rounded-lg border border-dark-700">
             <span className="text-2xl">{getFileIcon(selectedFile.type)}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">{selectedFile.name}</p>
-              <p className="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
+              <p className="text-sm font-medium text-white truncate">{selectedFile.name}</p>
+              <p className="text-xs text-dark-400">{formatFileSize(selectedFile.size)}</p>
             </div>
             <button
               type="button"
               onClick={removeSelectedFile}
-              className="text-red-500 hover:text-red-700"
+              className="text-red-400 hover:text-red-300 transition-colors"
             >
               ✕
             </button>
@@ -509,7 +509,7 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-300 transition"
+            className="bg-dark-800/50 border border-dark-700 text-white px-4 py-3 rounded-lg hover:bg-dark-700/50 transition-colors text-xl"
             title="Attach file"
           >
             📎
@@ -519,12 +519,12 @@ const ChatWindow = ({ selectedUser, messages, currentUser }) => {
             value={newMessage}
             onChange={handleTyping}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="flex-1 px-4 py-3 bg-dark-800/50 border border-dark-700 rounded-lg focus:outline-none focus:border-accent-purple text-white placeholder-dark-500 transition-all"
           />
           <button
             type="submit"
             disabled={(!newMessage.trim() && !selectedFile) || uploading}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-premium px-6 py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? 'Uploading...' : 'Send'}
           </button>

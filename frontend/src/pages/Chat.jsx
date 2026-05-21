@@ -162,25 +162,34 @@ const Chat = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-100">
-      <header className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-purple-600">Real-time Chat</h1>
+    <div className="h-screen flex flex-col bg-gradient-dark">
+      <header className="glass-dark shadow-premium px-6 py-4 flex justify-between items-center border-b border-dark-700/50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-premium flex items-center justify-center shadow-glow">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-accent-purple to-accent-pink bg-clip-text text-transparent">
+            SecureChat
+          </h1>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="relative">
               <img
-                src={user?.avatar || 'https://ui-avatars.com/api/?background=random'}
+                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.username}&background=667eea&color=fff`}
                 alt={user?.username}
-                className="w-10 h-10 rounded-full"
+                className="w-10 h-10 rounded-full border-2 border-accent-purple/50 shadow-glow"
               />
-              <span className={`absolute bottom-0 right-0 w-3 h-3 ${getCurrentStatusInfo().color} border-2 border-white rounded-full`}></span>
+              <span className={`absolute bottom-0 right-0 w-3 h-3 ${getCurrentStatusInfo().color} border-2 border-dark-900 rounded-full`}></span>
             </div>
             <div>
-              <span className="font-semibold text-gray-700 block">{user?.username}</span>
+              <span className="font-semibold text-white block">{user?.username}</span>
               <div className="relative">
                 <button
                   onClick={() => setShowStatusMenu(!showStatusMenu)}
-                  className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                  className="text-xs text-dark-400 hover:text-dark-200 flex items-center gap-1 transition-colors"
                 >
                   <span>{getCurrentStatusInfo().icon}</span>
                   <span>{currentStatus}</span>
@@ -188,17 +197,17 @@ const Chat = () => {
                 </button>
 
                 {showStatusMenu && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50 min-w-[180px]">
+                  <div className="absolute top-full left-0 mt-1 glass-dark border border-dark-700 rounded-lg shadow-premium py-1 z-50 min-w-[180px]">
                     {statuses.map((status) => (
                       <button
                         key={status.name}
                         onClick={() => handleStatusChange(status.name)}
-                        className={`w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2 ${
-                          currentStatus === status.name ? 'bg-purple-50' : ''
+                        className={`w-full px-4 py-2 text-left hover:bg-dark-700/50 flex items-center gap-2 transition-colors ${
+                          currentStatus === status.name ? 'bg-accent-purple/20' : ''
                         }`}
                       >
                         <span className={`w-3 h-3 ${status.color} rounded-full`}></span>
-                        <span className="text-sm">{status.name}</span>
+                        <span className="text-sm text-white">{status.name}</span>
                       </button>
                     ))}
                   </div>
@@ -208,7 +217,7 @@ const Chat = () => {
           </div>
           <button
             onClick={() => setShowNotificationSettings(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-dark-700/50 rounded-lg transition-colors text-2xl"
             title="Notification Settings"
           >
             🔔
@@ -216,14 +225,14 @@ const Chat = () => {
           {user?.isAdmin && (
             <button
               onClick={() => navigate('/admin')}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+              className="btn-premium px-4 py-2 rounded-lg text-sm font-medium"
             >
               Admin Panel
             </button>
           )}
           <button
             onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+            className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/30 transition-colors font-medium"
           >
             Logout
           </button>
@@ -231,37 +240,37 @@ const Chat = () => {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+        <div className="w-80 glass-dark border-r border-dark-700/50 flex flex-col">
           {/* Tabs */}
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-dark-700/50">
             <button
               onClick={() => setActiveTab('users')}
-              className={`flex-1 py-3 text-sm font-semibold ${
+              className={`flex-1 py-3 text-sm font-semibold transition-all ${
                 activeTab === 'users'
-                  ? 'text-purple-600 border-b-2 border-purple-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-white border-b-2 border-accent-purple bg-accent-purple/10'
+                  : 'text-dark-400 hover:text-dark-200 hover:bg-dark-700/30'
               }`}
             >
-              Users
+              💬 Users
             </button>
             <button
               onClick={() => setActiveTab('groups')}
-              className={`flex-1 py-3 text-sm font-semibold ${
+              className={`flex-1 py-3 text-sm font-semibold transition-all ${
                 activeTab === 'groups'
-                  ? 'text-purple-600 border-b-2 border-purple-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-white border-b-2 border-accent-purple bg-accent-purple/10'
+                  : 'text-dark-400 hover:text-dark-200 hover:bg-dark-700/30'
               }`}
             >
-              Groups
+              👥 Groups
             </button>
           </div>
 
           {/* Create Group Button */}
           {activeTab === 'groups' && (
-            <div className="p-3 border-b border-gray-200">
+            <div className="p-3 border-b border-dark-700/50">
               <button
                 onClick={() => setShowCreateGroupModal(true)}
-                className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition font-semibold"
+                className="w-full btn-premium py-2 rounded-lg text-sm font-semibold shadow-lg"
               >
                 + Create Group
               </button>
@@ -302,17 +311,27 @@ const Chat = () => {
             currentUser={user}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-white">
-            <div className="text-center">
-              <div className="text-6xl mb-4">💬</div>
-              <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                Welcome to Real-time Chat
+          <div className="flex-1 flex items-center justify-center bg-dark-900/50 backdrop-blur-sm">
+            <div className="text-center animate-fade-in">
+              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-premium mb-6 shadow-glow">
+                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Welcome to SecureChat
               </h2>
-              <p className="text-gray-500">
+              <p className="text-dark-400 max-w-md">
                 {activeTab === 'users'
-                  ? 'Select a user to start chatting'
-                  : 'Select a group or create a new one'}
+                  ? 'Select a user from the list to start a secure conversation'
+                  : 'Select a group or create a new one to start chatting'}
               </p>
+              <div className="mt-8 flex items-center justify-center gap-2 text-dark-500 text-sm">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                <span>End-to-end encrypted</span>
+              </div>
             </div>
           </div>
         )}
