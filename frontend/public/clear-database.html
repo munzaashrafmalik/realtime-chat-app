@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management - Clear All Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+        .btn-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: none;
+        }
+        .result.success {
+            border-left: 4px solid #10b981;
+            display: block;
+        }
+        .result.error {
+            border-left: 4px solid #ef4444;
+            display: block;
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .stats.show {
+            display: block;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #94a3b8;
+        }
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Database Management</h1>
+        <p>Clear all user accounts, messages, groups, and call records from the database. This will make your app completely fresh.</p>
+
+        <button class="btn btn-info" onclick="getStats()">📊 Show Database Stats</button>
+        <button class="btn btn-danger" onclick="clearDatabase()">🗑️ Clear All Data</button>
+
+        <div class="loading" id="loading">⏳ Loading...</div>
+
+        <div class="stats" id="stats"></div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://realtime-chat-app-production-81db.up.railway.app/api/admin';
+
+        async function getStats() {
+            const loading = document.getElementById('loading');
+            const statsDiv = document.getElementById('stats');
+            const resultDiv = document.getElementById('result');
+
+            loading.classList.add('show');
+            statsDiv.classList.remove('show');
+            resultDiv.classList.remove('success', 'error');
+            resultDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/database-stats`);
+                const data = await response.json();
+
+                loading.classList.remove('show');
+
+                if (data.success) {
+                    statsDiv.innerHTML = `
+                        <h3 style="margin-bottom: 15px; color: #fff;">Current Database Stats:</h3>
+                        <div class="stat-item">
+                            <span>👥 Users:</span>
+                            <strong>${data.stats.users}</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬 Messages:</span>
+                            <strong>${data.stats.messages}</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>👨‍👩‍👧‍👦 Groups:</span>
+                            <strong>${data.stats.groups}</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>📞 Calls:</span>
+                            <strong>${data.stats.calls}</strong>
+                        </div>
+                    `;
+                    statsDiv.classList.add('show');
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        async function clearDatabase() {
+            if (!confirm('⚠️ Are you sure? This will delete ALL accounts, messages, groups, and calls. This action cannot be undone!')) {
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const statsDiv = document.getElementById('stats');
+
+            loading.classList.add('show');
+            resultDiv.classList.remove('success', 'error');
+            resultDiv.style.display = 'none';
+            statsDiv.classList.remove('show');
+
+            try {
+                const response = await fetch(`${API_URL}/clear-database`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+
+                loading.classList.remove('show');
+
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3 style="margin-bottom: 10px;">✅ Success!</h3>
+                        <p>${data.message}</p>
+                        <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); color: #10b981;">
+                            🎉 Your database is now completely fresh! You can create new accounts and start testing.
+                        </p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ Error: ' + data.message;
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                resultDiv.className = 'result error';
+                resultDiv.textContent = '❌ Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
