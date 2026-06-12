@@ -195,19 +195,19 @@ const GroupChatWindow = ({ selectedGroup, messages, currentUser }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+    <div className="flex-1 flex flex-col bg-dark-900/50 backdrop-blur-sm">
+      <div className="glass-dark border-b border-dark-700/50 px-6 py-4 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <h2 className="font-semibold text-gray-800 text-lg">{selectedGroup.name}</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="font-semibold text-white text-lg">{selectedGroup.name}</h2>
+            <p className="text-sm text-dark-400">
               {getTypingText() || `${selectedGroup.members.length} members`}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              className="p-2 hover:bg-dark-700/50 rounded-lg transition-colors text-2xl"
               title="Search messages"
             >
               🔍
@@ -215,14 +215,14 @@ const GroupChatWindow = ({ selectedGroup, messages, currentUser }) => {
             {selectedGroup.members.slice(0, 5).map((member) => (
               <img
                 key={member._id}
-                src={member.avatar}
+                src={member.avatar || `https://ui-avatars.com/api/?name=${member.username}&background=667eea&color=fff`}
                 alt={member.username}
-                className="w-8 h-8 rounded-full border-2 border-white"
+                className="w-8 h-8 rounded-full border-2 border-accent-purple shadow-glow"
                 title={member.username}
               />
             ))}
             {selectedGroup.members.length > 5 && (
-              <span className="text-sm text-gray-500">+{selectedGroup.members.length - 5}</span>
+              <span className="text-sm text-dark-400">+{selectedGroup.members.length - 5}</span>
             )}
           </div>
         </div>
@@ -374,18 +374,18 @@ const GroupChatWindow = ({ selectedGroup, messages, currentUser }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSendMessage} className="border-t border-gray-200 p-4 bg-white">
+      <form onSubmit={handleSendMessage} className="border-t border-dark-700/50 p-4 glass-dark">
         {selectedFile && (
-          <div className="mb-2 flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+          <div className="mb-2 flex items-center gap-2 p-2 bg-dark-800/50 rounded-lg border border-dark-700">
             <span className="text-2xl">{getFileIcon(selectedFile.type)}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">{selectedFile.name}</p>
-              <p className="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
+              <p className="text-sm font-medium text-white truncate">{selectedFile.name}</p>
+              <p className="text-xs text-dark-400">{formatFileSize(selectedFile.size)}</p>
             </div>
             <button
               type="button"
               onClick={removeSelectedFile}
-              className="text-red-500 hover:text-red-700"
+              className="text-red-400 hover:text-red-300 transition-colors"
             >
               ✕
             </button>
@@ -402,7 +402,7 @@ const GroupChatWindow = ({ selectedGroup, messages, currentUser }) => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-300 transition"
+            className="bg-dark-800/50 border border-dark-700 text-white px-4 py-3 rounded-lg hover:bg-dark-700/50 transition-colors text-xl"
             title="Attach file"
           >
             📎
@@ -412,12 +412,13 @@ const GroupChatWindow = ({ selectedGroup, messages, currentUser }) => {
             value={newMessage}
             onChange={handleTyping}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="flex-1 px-4 py-3 bg-white/10 border-2 border-dark-600 rounded-lg focus:outline-none focus:border-accent-purple focus:bg-white/15 text-white placeholder-dark-400 transition-all font-medium"
+            autoComplete="off"
           />
           <button
             type="submit"
             disabled={(!newMessage.trim() && !selectedFile) || uploading}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-premium px-6 py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {uploading ? 'Uploading...' : 'Send'}
           </button>

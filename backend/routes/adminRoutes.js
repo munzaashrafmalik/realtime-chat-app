@@ -11,6 +11,7 @@ const {
   makeAdmin,
   removeAdmin
 } = require('../controllers/adminController');
+const { clearAllData, getDatabaseStats } = require('../controllers/databaseController');
 
 // All routes require authentication and admin privileges
 router.use(protect);
@@ -26,5 +27,9 @@ router.patch('/users/:userId/remove-admin', removeAdmin);
 
 // Analytics route
 router.get('/analytics', getAnalytics);
+
+// Database management routes (admin only)
+router.post('/clear-database', clearAllData);
+router.get('/database-stats', getDatabaseStats);
 
 module.exports = router;
